@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["breeze-pack", "breeze-app"]
+members = ["breeze-pack", "breeze-app", "breeze-tui"]
 
 [workspace.dependencies]
 anyhow = "1.0.102"
@@ -12,31 +12,13 @@ strum = "0.28.0"
 strum_macros = "0.28.0"
 
 [package]
-name = "breeze_tui"
+name = "breeze"
 version = "1.4.0"
 edition = "2021"
 
 [dependencies]
-anyhow.workspace = true
-console.workspace = true
-reqwest.workspace = true
-serde.workspace = true
-serde_json.workspace = true
-strum.workspace = true
-strum_macros.workspace = true
-
-dialoguer = { version = "0.11.0", features = ["fuzzy-select"] }
-open = "5.3.1"
+breeze_tui = { path = "./breeze-tui" }
 tokio = { version = "1.52.3", default-features = false, features = [
     "rt-multi-thread",
     "macros",
 ] }
-rfd = "0.15.2"
-clearscreen = "4.0.6"
-home = "0.5.12"
-zip = "8.6.0"
-regex = "1.12.3"
-breeze_pack = { path = "./breeze-pack" }
-
-[target.'cfg(target_os = "linux")'.dependencies]
-wayland-sys = { version = "0.31.6", features = ["dlopen"] }

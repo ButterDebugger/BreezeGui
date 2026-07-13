@@ -1,0 +1,25 @@
+[package]
+name = "breeze_tui"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+console.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+strum.workspace = true
+strum_macros.workspace = true
+
+dialoguer = { version = "0.11.0", features = ["fuzzy-select"] }
+open = "5.3.1"
+rfd = "0.15.2"
+clearscreen = "4.0.6"
+home = "0.5.12"
+zip = "8.6.0"
+regex = "1.12.3"
+breeze_pack = { path = "../breeze-pack" }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+wayland-sys = { version = "0.31.6", features = ["dlopen"] }
