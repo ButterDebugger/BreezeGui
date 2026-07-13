@@ -1,10 +1,16 @@
+use ferinth::Ferinth;
+use std::sync::LazyLock;
+
 pub mod format;
 pub mod packer;
+pub mod platforms;
+
+pub static MODRINTH_API: LazyLock<Ferinth<()>> = LazyLock::new(Ferinth::default);
 
 #[cfg(test)]
 mod tests {
     use crate::{
-        format::{Branch, Mod, ModLoader, Modpack},
+        format::{Branch, Mod, ModLoader, Modpack, Updater},
         packer::Packer,
     };
     use std::path::Path;
@@ -35,7 +41,10 @@ mod tests {
             name: "love".to_owned(),
             summary: Some("lots of love and i mean loooooots and loooots of love".to_owned()),
             author: Some("me".to_owned()),
-            updater: None,
+            updater: Some(Updater::Github {
+                repo: "me/love".to_owned(),
+                tag: "v1.0.0".to_owned(),
+            }),
             branches: vec!["1.21.11".to_owned()],
         }) {
             eprintln!("Error while writing pack data: {}", err);

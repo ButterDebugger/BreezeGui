@@ -22,6 +22,15 @@ impl ModLoader {
             ModLoader::Forge => style(self.to_string()).true_color(149, 158, 239),
         }
     }
+
+    pub fn to_api_string(self) -> String {
+        match self {
+            ModLoader::Fabric => "fabric".to_string(),
+            ModLoader::Quilt => "quilt".to_string(),
+            ModLoader::NeoForge => "neoforge".to_string(),
+            ModLoader::Forge => "forge".to_string(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -63,7 +72,5 @@ pub struct Modpack {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "source")]
 pub enum Updater {
-    Github {
-
-    },
+    Github { repo: String, tag: String },
 }
