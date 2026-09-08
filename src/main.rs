@@ -1,4 +1,13 @@
+use breeze_pack::{
+    format::{Branch, Mod, ModLoader, Modpack},
+    packer::Packer,
+    platforms::{
+        downloads::DownloadsConfig,
+        versions::{get_required_versions, ModSource},
+    },
+};
 use breeze_tui::App;
+use std::path::{Path, PathBuf};
 
 #[tokio::main]
 async fn main() {
@@ -34,6 +43,34 @@ async fn main() {
     //     )
     //     .await
     // );
+
+    // let pack = Packer::new(PathBuf::from("./wha.modx").into());
+
+    // let _ = pack.write_pack(&Modpack {
+    //     name: "nam".to_string(),
+    //     summary: None,
+    //     author: None,
+    //     updater: None,
+    //     branches: vec![],
+    // });
+
+    // let _ = pack.write_branch(
+    //     "what",
+    //     &Branch {
+    //         game_version: "1.21.11".to_string(),
+    //         mod_loader: ModLoader::Fabric,
+    //         loader_version: None,
+    //         mods: vec![Mod {
+    //             name: "Sodium".to_owned(),
+    //             source: ModSource::Modrinth {
+    //                 project_id: "AANobbMI".to_owned(),
+    //                 version: Some("uGvVQBnw".to_owned()),
+    //             },
+    //         }],
+    //     },
+    // );
+
+    // let _ = pack.save();
 
     let mut app = App::default();
 

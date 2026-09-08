@@ -12,6 +12,7 @@ mod tests {
     use crate::{
         format::{Branch, Mod, ModLoader, Modpack, Updater},
         packer::Packer,
+        platforms::versions::ModSource,
     };
     use std::path::Path;
 
@@ -58,15 +59,19 @@ mod tests {
                 mod_loader: ModLoader::Fabric,
                 loader_version: Some("i dont know".to_owned()),
                 mods: vec![
-                    Mod::Modrinth {
+                    Mod {
                         name: "Sodium".to_owned(),
-                        project_id: "AANobbMI".to_owned(),
-                        version: "mc1.21.11-0.8.12-beta.2-fabric".to_owned(),
+                        source: ModSource::Modrinth {
+                            project_id: "AANobbMI".to_owned(),
+                            version: Some("mc1.21.11-0.8.12-beta.2-fabric".to_owned()),
+                        },
                     },
-                    Mod::CurseForge {
+                    Mod {
                         name: "Sodium".to_owned(),
-                        project_id: 394468,
-                        file_id: 8071333,
+                        source: ModSource::CurseForge {
+                            project_id: 394468,
+                            file_id: Some(8071333),
+                        },
                     },
                 ],
             },

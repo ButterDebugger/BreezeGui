@@ -1,6 +1,8 @@
 use console::{style, StyledObject};
 use serde::{Deserialize, Serialize};
 
+use crate::platforms::versions::ModSource;
+
 #[derive(Debug, Clone, Serialize, Deserialize, strum_macros::Display)]
 pub enum ModLoader {
     #[strum(to_string = "Fabric")]
@@ -34,20 +36,9 @@ impl ModLoader {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(tag = "source")]
-pub enum Mod {
-    Modrinth {
-        name: String,
-        // Modrinth specific fields
-        project_id: String,
-        version: String,
-    },
-    CurseForge {
-        name: String,
-        // CurseForge specific fields
-        project_id: i32,
-        file_id: i32,
-    },
+pub struct Mod {
+    pub name: String,
+    pub source: ModSource,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

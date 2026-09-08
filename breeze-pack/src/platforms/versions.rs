@@ -1,13 +1,12 @@
-use crate::format::{Branch, ModLoader};
-use crate::{format::Mod, platforms::downloads::DownloadsConfig, MODRINTH_API};
+use crate::format::ModLoader;
+use crate::MODRINTH_API;
 use anyhow::Result;
-use ferinth::structures::version::{Dependency, DependencyType};
+use ferinth::structures::version::DependencyType;
 use reqwest::Url;
-use std::fs::{create_dir_all, File};
-use std::io::Write;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone)]
-pub enum ModEntry {
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ModSource {
     Modrinth {
         project_id: String,
         version: Option<String>,
@@ -20,22 +19,22 @@ pub enum ModEntry {
 
 #[derive(Debug, Clone)]
 pub struct ModFile {
-    mod_id: String,
-    filename: String,
-    url: Url,
+    pub mod_id: String,
+    pub filename: String,
+    pub url: Url,
 }
 
 pub async fn get_required_versions(
     game_version: String,
     mod_loader: ModLoader,
-    mods: Vec<ModEntry>,
+    mods: Vec<ModSource>,
 ) -> Result<Vec<ModFile>> {
     let mut mods = mods.clone();
     let mut downloads = Vec::new();
 
     while let Some(mc_mod) = mods.pop() {
         match mc_mod {
-            ModEntry::Modrinth {
+            ModSource::Modrinth {
                 project_id,
                 version,
                 ..
@@ -61,7 +60,7 @@ pub async fn get_required_versions(
                     match dependency.dependency_type {
                         DependencyType::Required => {
                             if let Some(project_id) = dependency.project_id.clone() {
-                                mods.push(ModEntry::Modrinth {
+                                mods.push(ModSource::Modrinth {
                                     project_id,
                                     version: dependency.version_id,
                                 });
@@ -81,48 +80,11 @@ pub async fn get_required_versions(
                     println!("No primary file found for this version.");
                 }
             }
-            ModEntry::CurseForge { .. } => {
+            ModSource::CurseForge { .. } => {
                 unimplemented!("CurseForge mod version fetching is not implemented yet");
             }
         }
     }
 
     Ok(downloads)
-}
-
-pub async fn download_mod(downloads: DownloadsConfig, mc_mod: Mod) -> Result<()> {
-    match mc_mod {
-        Mod::Modrinth {
-            project_id,
-            version,
-            ..
-        } => {
-            let version = MODRINTH_API
-                .version_get_from_number(project_id.as_str(), version.as_str())
-                .await?;
-
-            println!("Version: {:#?}", version);
-
-            if let Some(version_file) = version.files.iter().find(|e| e.primary) {
-                println!("Downloading {} from Modrinth...", version_file.filename);
-
-                let response = reqwest::get(version_file.url.clone()).await?;
-                let bytes = response.bytes().await?;
-
-                create_dir_all(&downloads.cache_dir)?;
-
-                let dest_path = downloads.cache_dir.join(version_file.filename.clone());
-                let mut dest = File::create(dest_path)?;
-
-                dest.write_all(&bytes)?;
-            } else {
-                println!("No primary file found for this version.");
-            }
-        }
-        Mod::CurseForge { .. } => {
-            unimplemented!("CurseForge mod downloading is not implemented yet");
-        }
-    }
-
-    Ok(())
 }
